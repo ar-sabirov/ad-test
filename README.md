@@ -6,9 +6,10 @@ Usage:
     `export PYTHONPATH="${PYTHONPATH}:/my/other/path"`
 2. Install dependencies:    
     `pip install -r requirements.txt`
-3. (Optional) Run *the test*    
+3. Edit `src/config.py` and add (absolute) path to `dataset.csv`    
+4. (Optional) Run *the test*    
     `pytest test/`
-4. Run app    
+5. Run app    
     `uvicorn server:app --reload`    
 
 

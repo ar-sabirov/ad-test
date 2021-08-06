@@ -8,7 +8,7 @@ def get_config() -> dict:
 
     test_config = {
         "db_path": "sqlite+aiosqlite:///:memory:",
-        "data_path": "/home/ar-sabirov/1-Code/tests/ad-test/dataset.csv",
+        "data_path": "dataset.csv",
     }
 
     return test_config
