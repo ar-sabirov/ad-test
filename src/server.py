@@ -7,8 +7,8 @@ from fastapi.responses import HTMLResponse
 
 from src.config import get_config
 from src.db.async_db import AsyncDatabase
+from src.db.table import COLS_STR, STATS
 from src.metrics import all_metrics
-from src.table import COLS_STR, STATS
 
 app = FastAPI()
 DB = None

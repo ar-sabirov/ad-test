@@ -10,8 +10,8 @@ from sqlalchemy import Date, Table, asc, desc, func
 from sqlalchemy.ext.asyncio import AsyncConnection, create_async_engine
 from sqlalchemy.future import select
 from sqlalchemy.sql.expression import text
+from src.db.table import COLS_STR, METADATA, STATS, get_cols
 from src.metrics import agg_metrics_map, metrics_map
-from src.table import COLS_STR, METADATA, STATS, get_cols
 
 
 class AsyncDatabase:
