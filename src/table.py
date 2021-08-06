@@ -8,7 +8,7 @@ from sqlalchemy import (
     String,
     Table,
 )
-
+COLS_STR = ["date", "channel", "country", "os"]
 METADATA = MetaData()
 STATS = Table(
     "stats",

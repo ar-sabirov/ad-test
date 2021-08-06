@@ -7,9 +7,9 @@ from fastapi import FastAPI, Query
 from fastapi.responses import HTMLResponse
 from sqlalchemy.ext.asyncio import create_async_engine
 
-from db import cols_str, init_db, select_smth
+from db import init_db, select_smth
 from metrics import all_metrics
-from table import STATS
+from table import STATS, COLS_STR
 
 app = FastAPI()
 
@@ -17,7 +17,7 @@ engine = create_async_engine("sqlite+aiosqlite:///:memory:", echo=True)
 asyncio.gather(init_db(engine))
 
 
-def check_args(**kwargs):
+def check_args(**kwargs) -> None:
     col = kwargs.get("col")
     group_col = kwargs.get("group_col")
     metric = kwargs.get("metric")
@@ -30,8 +30,8 @@ def check_args(**kwargs):
         ), f"Invalid columns {col}, Must be one of: {all_cols}"
     if group_col:
         assert all(
-            [gc in cols_str for gc in group_col]
-        ), f"Invalid group columns {group_col}. Must be one of {cols_str}"
+            [gc in COLS_STR for gc in group_col]
+        ), f"Invalid group columns {group_col}. Must be one of {COLS_STR}"
     if metric:
         assert all(
             [m in all_metrics for m in metric]

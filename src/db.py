@@ -3,26 +3,16 @@ import csv
 from datetime import date
 from typing import List, Optional
 
-from sqlalchemy import (
-    Column,
-    Date,
-    Table,
-    asc,
-    desc,
-    func,
-)
+from sqlalchemy import Column, Date, Table, asc, desc, func
 from sqlalchemy.ext.asyncio import AsyncConnection
 from sqlalchemy.future import select
 from sqlalchemy.sql.expression import text
 
-
-from metrics import metrics_map, agg_metrics_map
-from table import STATS, METADATA
-
-cols_str = ["date", "channel", "country", "os"]
+from metrics import agg_metrics_map, metrics_map
+from table import COLS_STR, METADATA, STATS
 
 
-async def inject_data(conn: AsyncConnection, table: Table):
+async def inject_data(conn: AsyncConnection, table: Table) -> None:
     with open("../dataset.csv", "r") as fr:
         dr = csv.DictReader(fr)
 
@@ -57,7 +47,7 @@ async def select_smth(
     m_map = metrics_map
     if group_columns:
         m_map = agg_metrics_map
-        cols = set(columns) - set(group_columns) - set(cols_str)
+        cols = set(columns) - set(group_columns) - set(COLS_STR)
         cols = get_cols(STATS, cols)
         cols = [func.sum(c).label(c.name) for c in cols]
         group_columns = get_cols(STATS, group_columns)
