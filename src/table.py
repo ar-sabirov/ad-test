@@ -1,13 +1,7 @@
+from typing import List
 
-from sqlalchemy import (
-    Column,
-    Date,
-    Float,
-    Integer,
-    MetaData,
-    String,
-    Table,
-)
+from sqlalchemy import Column, Date, Float, Integer, MetaData, String, Table
+
 COLS_STR = ["date", "channel", "country", "os"]
 METADATA = MetaData()
 STATS = Table(
@@ -23,3 +17,7 @@ STATS = Table(
     Column("spend", Float(), nullable=False),
     Column("revenue", Float(), nullable=False),
 )
+
+
+def get_cols(table: Table, cols: List[str]) -> List[Column]:
+    return [table.c.get(col) for col in cols]

@@ -9,7 +9,7 @@ from sqlalchemy.future import select
 from sqlalchemy.sql.expression import text
 
 from metrics import agg_metrics_map, metrics_map
-from table import COLS_STR, METADATA, STATS
+from table import COLS_STR, METADATA, STATS, get_cols
 
 
 async def inject_data(conn: AsyncConnection, table: Table) -> None:
@@ -23,10 +23,6 @@ async def inject_data(conn: AsyncConnection, table: Table) -> None:
         dr = [convert(r) for r in dr]
 
         await conn.execute(table.insert(), [i for i in dr])
-
-
-def get_cols(table: Table, cols: List[str]) -> List[Column]:
-    return [table.c.get(col) for col in cols]
 
 
 async def select_smth(
