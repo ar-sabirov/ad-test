@@ -1,0 +1,4 @@
+aiosqlite
+sqlalchemy
+uvicorn[standard]
+pandas
