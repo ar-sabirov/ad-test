@@ -3,7 +3,7 @@ import csv
 from datetime import date
 from typing import List, Optional
 
-from sqlalchemy import Column, Date, Table, asc, desc, func
+from sqlalchemy import Date, Table, asc, desc, func
 from sqlalchemy.ext.asyncio import AsyncConnection
 from sqlalchemy.future import select
 from sqlalchemy.sql.expression import text

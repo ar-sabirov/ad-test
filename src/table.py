@@ -2,7 +2,7 @@ from typing import List
 
 from sqlalchemy import Column, Date, Float, Integer, MetaData, String, Table
 
-COLS_STR = ["date", "channel", "country", "os"]
+COLS_STR = {"date", "channel", "country", "os"}
 METADATA = MetaData()
 STATS = Table(
     "stats",

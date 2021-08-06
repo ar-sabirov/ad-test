@@ -28,7 +28,7 @@ def check_args(**kwargs: Dict[str, Any]) -> None:
     metric = kwargs.get("metric")
     order_by = kwargs.get("order_by")
 
-    all_cols = STATS.c.keys()
+    all_cols = set(STATS.c.keys())
     if col and not all([c in all_cols for c in col]):
         msg = f"Invalid columns {col}, Must be one of: {all_cols}"
         raise ValueError(msg)
@@ -41,7 +41,7 @@ def check_args(**kwargs: Dict[str, Any]) -> None:
         msg = f"Invalid metrics {metric}. Must be one of {all_metrics}"
         raise ValueError(msg)
 
-    ordering_cols = all_cols + all_metrics
+    ordering_cols = all_cols | all_metrics
     if order_by and not (order_by in ordering_cols):
         msg = f"Invalid ordering {order_by}. Must be one of {ordering_cols}"
         raise ValueError(msg)
