@@ -12,6 +12,7 @@ async def client():
 
 @pytest.mark.asyncio
 async def test_read_main(client):
-    response = await client.get("/")
-    assert response.status_code == 200
-    # assert response.json() == {"msg": "Hello World"}
+    response200 = await client.get("/")
+    response400 = await client.get("/?col=wtf")
+    assert response200.status_code == 200
+    assert response400.status_code == 400
