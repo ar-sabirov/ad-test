@@ -7,8 +7,9 @@ from fastapi import FastAPI, Query
 from fastapi.responses import HTMLResponse
 from sqlalchemy.ext.asyncio import create_async_engine
 
-from db import init_db, select_smth, stats, cols_str
+from db import cols_str, init_db, select_smth
 from metrics import all_metrics
+from table import STATS
 
 app = FastAPI()
 
@@ -22,7 +23,7 @@ def check_args(**kwargs):
     metric = kwargs.get("metric")
     order_by = kwargs.get("order_by")
 
-    all_cols = stats.c.keys()
+    all_cols = STATS.c.keys()
     if col:
         assert all(
             [c in all_cols for c in col]

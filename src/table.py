@@ -9,10 +9,10 @@ from sqlalchemy import (
     Table,
 )
 
-metadata = MetaData()
-stats = Table(
+METADATA = MetaData()
+STATS = Table(
     "stats",
-    metadata,
+    METADATA,
     Column("date", Date, nullable=False),
     Column("channel", String(30), nullable=False),
     Column("country", String(2), nullable=False),
