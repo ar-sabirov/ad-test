@@ -3,12 +3,7 @@
 
 
 def get_config() -> dict:
-    """Loads and returns config if ADD_CONFIG is present in os.environ
-    or returns default config otherwise
-    Returns
-    -------
-    dict
-        App configuration file
+    """(Very) simple configuration
     """
 
     test_config = {

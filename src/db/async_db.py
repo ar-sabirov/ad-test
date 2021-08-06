@@ -1,3 +1,6 @@
+"""Database class to work with sqlalchemy
+async interfaces (e.g aiosqlite)
+"""
 import asyncio
 import csv
 from datetime import date

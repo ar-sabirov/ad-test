@@ -1,11 +1,15 @@
-from sqlalchemy import func
+from sqlalchemy import Table, func
 
 
-def agg_cpi(table):
+def agg_cpi(table: Table):
+    """CPI to use in aggregation queries
+    """    
     return (func.sum(table.c.spend) / func.sum(table.c.installs)).label("CPI")
 
 
-def cpi(table):
+def cpi(table: Table):
+    """cpi = spend / installs
+    """    
     return (table.c.spend / table.c.installs).label("CPI")
 
 
