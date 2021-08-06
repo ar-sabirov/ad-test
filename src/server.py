@@ -45,7 +45,7 @@ def check_args(**kwargs: Dict[str, Any]) -> None:
 
 
 @app.on_event("startup")
-async def startup_event():
+async def startup_event() -> None:
     global DB
     CONFIG = get_config()
     DB = AsyncDatabase(CONFIG["db_path"])
@@ -54,13 +54,17 @@ async def startup_event():
 
 @app.get("/")
 async def query_data(
-    date_from: Optional[date] = None,
-    date_to: Optional[date] = None,
-    col: Optional[List[str]] = Query([]),
-    group_col: Optional[List[str]] = Query([]),
-    metric: Optional[List[str]] = Query([]),
-    order_by: Optional[str] = None,
-    desc: bool = True,
+    date_from: Optional[date] = Query(None, description="Starting date"),
+    date_to: Optional[date] = Query(None, description="Ending date"),
+    col: Optional[List[str]] = Query([], description="What to select"),
+    group_col: Optional[List[str]] = Query([], description="How to group it"),
+    metric: Optional[List[str]] = Query(
+        [], description="Metric to calculate (e.g `cpi`)"
+    ),
+    order_by: Optional[str] = Query(
+        None, description="Column to order by (default descending)"
+    ),
+    desc: bool = Query(True, description="Ordering"),
 ) -> HTMLResponse:
     try:
         check_args(**locals())

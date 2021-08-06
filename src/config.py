@@ -1,8 +1,8 @@
 """Module for configuration handling
 """
+from typing import Any, Dict
 
-
-def get_config() -> dict:
+def get_config() -> Dict[str, Any]:
     """(Very) simple configuration
     """
 
