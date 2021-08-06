@@ -1,6 +1,6 @@
 import asyncio
 from datetime import date
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 import pandas as pd
 from fastapi import FastAPI, Query
@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import create_async_engine
 
 from db import init_db, select_smth
 from metrics import all_metrics
-from table import STATS, COLS_STR
+from table import COLS_STR, STATS
 
 app = FastAPI()
 
@@ -17,30 +17,34 @@ engine = create_async_engine("sqlite+aiosqlite:///:memory:", echo=True)
 asyncio.gather(init_db(engine))
 
 
-def check_args(**kwargs) -> None:
+def check_args(**kwargs: Dict[str, Any]) -> None:
+    """Check query parameters to be valid 
+
+    Raises:
+        ValueError: Invalid query params
+    """    
     col = kwargs.get("col")
     group_col = kwargs.get("group_col")
     metric = kwargs.get("metric")
     order_by = kwargs.get("order_by")
 
     all_cols = STATS.c.keys()
-    if col:
-        assert all(
-            [c in all_cols for c in col]
-        ), f"Invalid columns {col}, Must be one of: {all_cols}"
-    if group_col:
-        assert all(
-            [gc in COLS_STR for gc in group_col]
-        ), f"Invalid group columns {group_col}. Must be one of {COLS_STR}"
-    if metric:
-        assert all(
-            [m in all_metrics for m in metric]
-        ), f"Invalid metrics {metric}. Must be one of {all_metrics}"
-    if order_by:
-        ordering_cols = all_cols + all_metrics
-        assert (
-            order_by in ordering_cols
-        ), f"Invalid ordering {order_by}. Must be one of {ordering_cols}"
+    if col and not all([c in all_cols for c in col]):
+        msg = f"Invalid columns {col}, Must be one of: {all_cols}"
+        raise ValueError(msg)
+
+    if group_col and not all([gc in COLS_STR for gc in group_col]):
+        msg = f"Invalid group columns {group_col}. Must be one of {COLS_STR}"
+        raise ValueError(msg)
+
+    if metric and not all([m in all_metrics for m in metric]):
+        msg = f"Invalid metrics {metric}. Must be one of {all_metrics}"
+        raise ValueError(msg)
+
+    ordering_cols = all_cols + all_metrics
+    if order_by and not (order_by in ordering_cols):
+        msg = f"Invalid ordering {order_by}. Must be one of {ordering_cols}"
+        raise ValueError(msg)
 
 
 @app.get("/")
@@ -55,7 +59,7 @@ async def query_data(
 ) -> HTMLResponse:
     try:
         check_args(**locals())
-    except AssertionError as e:
+    except ValueError as e:
         return HTMLResponse(str(e), status_code=400)
 
     async with engine.connect() as conn:
