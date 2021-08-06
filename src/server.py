@@ -5,24 +5,25 @@ from typing import Any, Dict, List, Optional
 import pandas as pd
 from fastapi import FastAPI, Query
 from fastapi.responses import HTMLResponse
-from sqlalchemy.ext.asyncio import create_async_engine
 
-from db import init_db, select_smth
+from config import get_config
+from db.async_db import AsyncDatabase
 from metrics import all_metrics
 from table import COLS_STR, STATS
 
-app = FastAPI()
+CONFIG = get_config()
+DB = AsyncDatabase(CONFIG["db_path"])
+asyncio.gather(DB.init_db())
 
-engine = create_async_engine("sqlite+aiosqlite:///:memory:", echo=True)
-asyncio.gather(init_db(engine))
+app = FastAPI()
 
 
 def check_args(**kwargs: Dict[str, Any]) -> None:
-    """Check query parameters to be valid 
+    """Check query parameters to be valid
 
     Raises:
         ValueError: Invalid query params
-    """    
+    """
     col = kwargs.get("col")
     group_col = kwargs.get("group_col")
     metric = kwargs.get("metric")
@@ -62,8 +63,8 @@ async def query_data(
     except ValueError as e:
         return HTMLResponse(str(e), status_code=400)
 
-    async with engine.connect() as conn:
-        result = await select_smth(
+    async with DB.engine.connect() as conn:
+        result = await DB.select_smth(
             conn=conn,
             descending=descending,
             group_columns=group_col,
@@ -74,5 +75,6 @@ async def query_data(
             date_to=date_to,
         )
 
+    # pandas aka the infamous html converter
     df = pd.DataFrame(result, columns=result.keys())
     return HTMLResponse(df.to_html())
