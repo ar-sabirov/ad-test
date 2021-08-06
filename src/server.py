@@ -1,4 +1,3 @@
-import asyncio
 from datetime import date
 from typing import Any, Dict, List, Optional
 
@@ -6,16 +5,13 @@ import pandas as pd
 from fastapi import FastAPI, Query
 from fastapi.responses import HTMLResponse
 
-from config import get_config
-from db.async_db import AsyncDatabase
-from metrics import all_metrics
-from table import COLS_STR, STATS
-
-CONFIG = get_config()
-DB = AsyncDatabase(CONFIG["db_path"])
-asyncio.gather(DB.init_db())
+from src.config import get_config
+from src.db.async_db import AsyncDatabase
+from src.metrics import all_metrics
+from src.table import COLS_STR, STATS
 
 app = FastAPI()
+DB = None
 
 
 def check_args(**kwargs: Dict[str, Any]) -> None:
@@ -46,6 +42,14 @@ def check_args(**kwargs: Dict[str, Any]) -> None:
     if order_by and not (order_by in ordering_cols):
         msg = f"Invalid ordering {order_by}. Must be one of {ordering_cols}"
         raise ValueError(msg)
+
+
+@app.on_event("startup")
+async def startup_event():
+    global DB
+    CONFIG = get_config()
+    DB = AsyncDatabase(CONFIG["db_path"])
+    await DB.init_db(CONFIG["data_path"])
 
 
 @app.get("/")

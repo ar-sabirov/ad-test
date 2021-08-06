@@ -3,20 +3,27 @@ import csv
 from datetime import date
 from typing import List, Optional
 
-from metrics import agg_metrics_map, metrics_map
 from sqlalchemy import Date, Table, asc, desc, func
 from sqlalchemy.ext.asyncio import AsyncConnection, create_async_engine
 from sqlalchemy.future import select
 from sqlalchemy.sql.expression import text
-from table import COLS_STR, METADATA, STATS, get_cols
+from src.metrics import agg_metrics_map, metrics_map
+from src.table import COLS_STR, METADATA, STATS, get_cols
 
 
 class AsyncDatabase:
     def __init__(self, db_path: str) -> None:
         self.engine = create_async_engine(db_path, echo=True)
 
-    async def inject_data(self, conn: AsyncConnection, table: Table) -> None:
-        with open("../dataset.csv", "r") as fr:
+    async def init_db(self, data_path: str) -> None:
+        async with self.engine.begin() as conn:
+            await conn.run_sync(METADATA.create_all)
+            await asyncio.gather(*[self.inject_data(data_path, conn, STATS)])
+
+    async def inject_data(
+        self, data_path: str, conn: AsyncConnection, table: Table
+    ) -> None:
+        with open(data_path, "r") as fr:
             dr = csv.DictReader(fr)
 
             def convert(record):
@@ -71,8 +78,3 @@ class AsyncDatabase:
         result = await conn.execute(sel)
 
         return result
-
-    async def init_db(self) -> None:
-        async with self.engine.begin() as conn:
-            await conn.run_sync(METADATA.create_all)
-            await asyncio.gather(*[self.inject_data(conn, STATS)])

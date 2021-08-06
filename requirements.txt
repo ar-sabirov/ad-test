@@ -2,3 +2,9 @@ aiosqlite
 sqlalchemy
 uvicorn[standard]
 pandas
+fastapi
+
+#dev section should be separate but whatever
+pytest-asyncio
+httpx
+asgi_lifespan
