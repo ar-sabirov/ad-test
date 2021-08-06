@@ -60,7 +60,7 @@ async def query_data(
     group_col: Optional[List[str]] = Query([]),
     metric: Optional[List[str]] = Query([]),
     order_by: Optional[str] = None,
-    descending: bool = True,
+    desc: bool = True,
 ) -> HTMLResponse:
     try:
         check_args(**locals())
@@ -70,7 +70,7 @@ async def query_data(
     async with DB.engine.connect() as conn:
         result = await DB.select_smth(
             conn=conn,
-            descending=descending,
+            descending=desc,
             group_columns=group_col,
             metrics=metric,
             columns=col,
